@@ -90,7 +90,7 @@ export default function AsistenteIA() {
           {generatedDraft && (
             <div style={{ marginTop: 20, padding: 16, background: 'var(--muted)', borderRadius: 10, border: '1px solid var(--border)' }}>
               <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent)', textTransform: 'uppercase', marginBottom: 8 }}>Borrador Generado por IA</div>
-              <pre style={{ margin: 0, fontSize: 12.5, fontFamily: 'var(--font-jakarta)', color: 'var(--foreground)', whitespace: 'pre-wrap' }}>{generatedDraft}</pre>
+              <pre style={{ margin: 0, fontSize: 12.5, fontFamily: 'var(--font-jakarta)', color: 'var(--foreground)', whiteSpace: 'pre-wrap' }}>{generatedDraft}</pre>
               <button
                 onClick={() => alert('Borrador aprobado y guardado en la consulta del paciente.')}
                 style={{ marginTop: 12, padding: '8px 16px', background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: 6, fontSize: 12.5, fontWeight: 600, cursor: 'pointer' }}

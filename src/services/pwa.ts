@@ -157,9 +157,9 @@ class PwaService {
     return count
   }
 
-  public subscribe(listener: PwaListener) {
+  public subscribe(listener: PwaListener): () => void {
     this.listeners.add(listener)
-    return () => this.listeners.delete(listener)
+    return () => { this.listeners.delete(listener) }
   }
 
   private notifyListeners() {

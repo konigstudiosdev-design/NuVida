@@ -162,15 +162,15 @@ export default function Alimentos() {
                 <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--foreground)', marginBottom: 4 }}>{r.name}</div>
                 <div style={{ display: 'flex', gap: 14, marginBottom: 14 }}>
                   <div style={{ fontSize: 12, color: 'var(--muted-foreground)', display: 'flex', alignItems: 'center', gap: 4 }}>
-                    ⏱️ {r.time}
+                    ⏱️ {r.timeMin} min
                   </div>
                   <div style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>{r.kcal} kcal</div>
                   <div style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>{r.servings} porción</div>
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                   {r.ingredients.map(ing => (
-                    <span key={ing} style={{ fontSize: 11.5, padding: '4px 8px', background: 'var(--muted)', borderRadius: 6, color: 'var(--secondary-foreground)' }}>
-                      {ing}
+                    <span key={ing.foodName} style={{ fontSize: 11.5, padding: '4px 8px', background: 'var(--muted)', borderRadius: 6, color: 'var(--secondary-foreground)' }}>
+                      {ing.foodName} ({ing.amount})
                     </span>
                   ))}
                 </div>

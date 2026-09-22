@@ -27,7 +27,7 @@ class PushNotificationService {
         badge: '/icons/icon-192.svg',
         vibrate: [100, 50, 100],
         ...options,
-      })
+      } as any)
     } else {
       new Notification(title, options)
     }

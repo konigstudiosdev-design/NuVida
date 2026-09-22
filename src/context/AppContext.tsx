@@ -116,6 +116,15 @@ export interface Consultation {
   planName: string
   status: 'completada' | 'en progreso' | 'pendiente'
   deltaPeso: string
+  // Additional fields used in Consultas.tsx
+  peso?: number
+  delta?: string
+  obs?: string
+  cinturaCm?: number
+  caderaCm?: number
+  grasaPct?: number
+  musculoKg?: number
+  presionArt?: string
 }
 
 export interface FoodItem {
@@ -462,7 +471,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }
 
   const addPayment = (p: Omit<Payment, 'id'>) => {
-    const newPayment: Payment = { ...p }
+    const newPayment: Payment = { ...p, id: `pay_${Date.now()}` }
     setPayments(prev => [newPayment, ...prev])
     closeModal()
   }

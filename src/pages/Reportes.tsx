@@ -104,7 +104,7 @@ export default function Reportes() {
             <BarChart data={ADHERENCIA_DATA} margin={{ top: 4, right: 4, bottom: 0, left: -30 }}>
               <XAxis dataKey="mes" tick={{ fontSize: 11, fill: '#7C7870', fontFamily: 'var(--font-jakarta)' }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 10, fill: '#7C7870', fontFamily: 'var(--font-jetbrains)' }} axisLine={false} tickLine={false} domain={[60, 100]} tickFormatter={v => `${v}%`} />
-              <Tooltip contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12, fontFamily: 'var(--font-jakarta)' }} formatter={(v: number) => [`${v}%`, 'Adherencia']} />
+              <Tooltip contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12, fontFamily: 'var(--font-jakarta)' }} formatter={(v: any) => [`${v}%`, 'Adherencia']} />
               <Bar dataKey="tasa" fill="#28845A" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
@@ -149,7 +149,7 @@ export default function Reportes() {
             <BarChart data={AGE_DATA} layout="vertical" margin={{ top: 0, right: 24, bottom: 0, left: 0 }}>
               <XAxis type="number" tick={{ fontSize: 10, fill: '#7C7870', fontFamily: 'var(--font-jetbrains)' }} axisLine={false} tickLine={false} />
               <YAxis type="category" dataKey="rango" tick={{ fontSize: 12, fill: '#7C7870', fontFamily: 'var(--font-jakarta)' }} axisLine={false} tickLine={false} width={44} />
-              <Tooltip contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12, fontFamily: 'var(--font-jakarta)' }} formatter={(v: number) => [v, 'Pacientes']} />
+              <Tooltip contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12, fontFamily: 'var(--font-jakarta)' }} formatter={(v: any) => [v, 'Pacientes']} />
               <Bar dataKey="pacientes" fill="#14432C" radius={[0, 4, 4, 0]} />
             </BarChart>
           </ResponsiveContainer>
