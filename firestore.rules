@@ -1,0 +1,84 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions for Multi-Tenant RBAC Security
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isOrgMember(orgId) {
+      return isAuthenticated() && getUserData().organizationId == orgId;
+    }
+
+    function hasRole(role) {
+      return isAuthenticated() && getUserData().role == role;
+    }
+
+    function isPatientOwner(patientId) {
+      return isAuthenticated() && getUserData().role == 'paciente' && getUserData().patientId == patientId;
+    }
+
+    // Users Collection
+    match /users/{userId} {
+      allow read: if isAuthenticated() && (request.auth.uid == userId || getUserData().organizationId == resource.data.organizationId);
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+      allow update, delete: if isAuthenticated() && (request.auth.uid == userId || hasRole('nutriologo'));
+    }
+
+    // Organizations Collection
+    match /organizations/{orgId} {
+      allow read: if isOrgMember(orgId);
+      allow write: if isOrgMember(orgId) && hasRole('nutriologo');
+    }
+
+    // Patients Collection (Enforces Multi-Tenant Isolation)
+    match /organizations/{orgId}/patients/{patientId} {
+      allow read: if isOrgMember(orgId) && (hasRole('nutriologo') || hasRole('recepcionista') || isPatientOwner(patientId));
+      allow create, update: if isOrgMember(orgId) && (hasRole('nutriologo') || hasRole('recepcionista'));
+      allow delete: if isOrgMember(orgId) && hasRole('nutriologo');
+    }
+
+    // Consultations Collection
+    match /organizations/{orgId}/consultations/{consultationId} {
+      allow read: if isOrgMember(orgId) && hasRole('nutriologo');
+      allow create, update, delete: if isOrgMember(orgId) && hasRole('nutriologo');
+    }
+
+    // Anthropometry Collection
+    match /organizations/{orgId}/anthropometry/{entryId} {
+      allow read: if isOrgMember(orgId) && (hasRole('nutriologo') || (hasRole('paciente') && isPatientOwner(resource.data.patientId)));
+      allow create, update, delete: if isOrgMember(orgId) && hasRole('nutriologo');
+    }
+
+    // Meal Plans Collection
+    match /organizations/{orgId}/mealPlans/{planId} {
+      allow read: if isOrgMember(orgId) && (hasRole('nutriologo') || (hasRole('paciente') && isPatientOwner(resource.data.patientId)));
+      allow create, update, delete: if isOrgMember(orgId) && hasRole('nutriologo');
+    }
+
+    // Payments Collection
+    match /organizations/{orgId}/payments/{paymentId} {
+      allow read: if isOrgMember(orgId) && (hasRole('nutriologo') || hasRole('recepcionista'));
+      allow create, update: if isOrgMember(orgId) && (hasRole('nutriologo') || hasRole('recepcionista'));
+      allow delete: if isOrgMember(orgId) && hasRole('nutriologo');
+    }
+
+    // Appointments Collection
+    match /organizations/{orgId}/appointments/{appId} {
+      allow read: if isOrgMember(orgId);
+      allow create, update, delete: if isOrgMember(orgId) && (hasRole('nutriologo') || hasRole('recepcionista'));
+    }
+
+    // Audit Logs Collection (Read-Only for Admin, Immutable Write)
+    match /organizations/{orgId}/auditLogs/{logId} {
+      allow read: if isOrgMember(orgId) && hasRole('nutriologo');
+      allow create: if isOrgMember(orgId);
+      allow update, delete: if false; // Immutable Audit Logs
+    }
+  }
+}

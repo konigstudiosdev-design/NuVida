@@ -1,0 +1,54 @@
+{
+  "name": "NuVida — Todo tu consultorio nutricional, en un solo lugar",
+  "short_name": "NuVida",
+  "description": "Plataforma integral para gestión de consultorios nutricionales, expedientes clínicos, planes alimenticios, agenda y seguimiento.",
+  "start_url": "/",
+  "id": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#F7F6F3",
+  "theme_color": "#14432C",
+  "lang": "es-MX",
+  "categories": ["medical", "health", "productivity", "business"],
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-1024.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Nueva Consulta",
+      "short_name": "Consulta",
+      "description": "Registrar consulta clínica rápida",
+      "url": "/?action=nueva-consulta"
+    },
+    {
+      "name": "Ver Agenda",
+      "short_name": "Agenda",
+      "description": "Ver citas del día",
+      "url": "/?page=agenda"
+    },
+    {
+      "name": "Nuevo Paciente",
+      "short_name": "+ Paciente",
+      "description": "Crear expediente de paciente",
+      "url": "/?action=nuevo-paciente"
+    }
+  ]
+}

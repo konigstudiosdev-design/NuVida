@@ -1,0 +1,25 @@
+node_modules/
+dist/
+build/
+out/
+.cache/
+.env
+.env.local
+.env.production
+.vite/
+vite.config.*.timestamp-*
+*.tsbuildinfo
+*-debug.log*
+logs/
+*.log
+.claude-replay.*
+.tmp-*
+/.figma/design-context/
+*.dmg
+*.exe
+*.zip
+*.AppImage
+
+# Platform-managed agentplat state
+/.plugins/
+/.opencode-skills/
