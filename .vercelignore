@@ -1,0 +1,9 @@
+# Ignorar instaladores pesados de Electron
+dist/*.dmg
+dist/*.zip
+dist/*.exe
+dist/mac-arm64/
+dist/win-arm64-unpacked/
+electron/
+.git/
+node_modules/
