@@ -299,6 +299,21 @@ export default function LoginView({
           </div>
         </div>
 
+        {/* PWA Manual Install Instructions */}
+        <div style={{ marginTop: 24, padding: '16px', background: '#F7F6F3', borderRadius: 12, border: '1px dashed #C9C5BC' }}>
+          <h3 style={{ margin: '0 0 10px', fontSize: 13, fontWeight: 700, color: '#14432C', display: 'flex', alignItems: 'center', gap: 6 }}>
+            📱 Usa NuVida como una App
+          </h3>
+          <ul style={{ margin: 0, paddingLeft: 18, fontSize: 12, color: '#625F58', display: 'flex', flexDirection: 'column', gap: 8, lineHeight: 1.4 }}>
+            <li>
+              <strong>En iPhone / iPad:</strong> Toca el botón de <em>Compartir</em> en Safari y luego selecciona <strong>"Agregar a Inicio"</strong>.
+            </li>
+            <li>
+              <strong>En Android / PC:</strong> Usa el botón de instalar en la parte superior, o busca <strong>"Instalar aplicación"</strong> en el menú de Chrome/Edge.
+            </li>
+          </ul>
+        </div>
+
         {/* Footer Support Links */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 20, paddingTop: 16, borderTop: '1px solid #E0DBD2', fontSize: 12 }}>
           <button onClick={() => alert('Para restablecer tu contraseña:\n\n• Ingresa tu correo para recibir un enlace de recuperación.\n• Si eres Equipo o Paciente: Contacta al Nutriólogo administrador para restablecer tus credenciales.')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#7C7870' }}>
