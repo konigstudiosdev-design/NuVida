@@ -8,7 +8,7 @@ export default function LoginView({
   onSuccess: () => void
   onGoToRegister: () => void
 }) {
-  const { loginWithGoogle, loginWithCredentials, loginWithPhoneOtp } = useAuth()
+  const { loginWithGoogle, loginWithCredentials, sendPhoneOtp, verifyPhoneOtp } = useAuth()
 
   const [subMethod, setSubMethod] = useState<'google' | 'email' | 'phone'>('google')
 
@@ -55,10 +55,20 @@ export default function LoginView({
     }
   }
 
-  const handleSendOtp = (e: React.FormEvent) => {
+  const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!phone) return
-    setOtpSent(true)
+
+    setLoading(true)
+    setErrorMessage(null)
+    const res = await sendPhoneOtp(phone, 'recaptcha-container')
+    setLoading(false)
+
+    if (res.success) {
+      setOtpSent(true)
+    } else {
+      setErrorMessage(res.message || 'No se pudo enviar el SMS. Verifica tu número.')
+    }
   }
 
   const handleVerifyOtp = async (e: React.FormEvent) => {
@@ -66,7 +76,7 @@ export default function LoginView({
     setLoading(true)
     setErrorMessage(null)
 
-    const res = await loginWithPhoneOtp(phone, otpCode)
+    const res = await verifyPhoneOtp(otpCode)
     setLoading(false)
     if (res.success) {
       onSuccess()
@@ -239,7 +249,7 @@ export default function LoginView({
               {!otpSent ? (
                 <form onSubmit={handleSendOtp} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                   <div>
-                    <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#131210', marginBottom: 5 }}>Teléfono móvil (WhatsApp)</label>
+                    <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#131210', marginBottom: 5 }}>Teléfono móvil (SMS)</label>
                     <input
                       type="tel"
                       required
@@ -249,15 +259,20 @@ export default function LoginView({
                       onChange={e => setPhone(e.target.value)}
                       style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #E0DBD2', fontSize: 13.5, outline: 'none', background: '#F7F6F3' }}
                     />
+                    <p style={{ fontSize: 11, color: '#9CA3AF', margin: '4px 0 0' }}>Incluye el código de tu país (ej. +52)</p>
                   </div>
-                  <button type="submit" style={{ width: '100%', padding: '12px', background: '#14432C', color: '#FFF', border: 'none', borderRadius: 8, fontSize: 13.5, fontWeight: 700, cursor: 'pointer' }}>
-                    Enviar código OTP
+
+                  {/* Invisible Recaptcha Container for Firebase */}
+                  <div id="recaptcha-container"></div>
+
+                  <button type="submit" disabled={loading} style={{ width: '100%', padding: '12px', background: '#14432C', color: '#FFF', border: 'none', borderRadius: 8, fontSize: 13.5, fontWeight: 700, cursor: 'pointer' }}>
+                    {loading ? 'Enviando SMS...' : 'Recibir código por SMS'}
                   </button>
                 </form>
               ) : (
                 <form onSubmit={handleVerifyOtp} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                   <div>
-                    <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#131210', marginBottom: 5 }}>Código OTP enviado a {phone}</label>
+                    <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#131210', marginBottom: 5 }}>Código SMS enviado a {phone}</label>
                     <input
                       type="text"
                       required
