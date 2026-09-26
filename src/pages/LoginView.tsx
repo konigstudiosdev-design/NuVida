@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
+import { pwaService } from '../services/pwa'
 
 export default function LoginView({
   onSuccess,
@@ -11,6 +12,14 @@ export default function LoginView({
   const { loginWithGoogle, loginWithCredentials, sendPhoneOtp, verifyPhoneOtp } = useAuth()
 
   const [subMethod, setSubMethod] = useState<'google' | 'email' | 'phone'>('google')
+  const [showInstallInfo, setShowInstallInfo] = useState(false)
+  const [canInstall, setCanInstall] = useState(pwaService.isInstallable)
+
+  useEffect(() => {
+    return pwaService.subscribe(() => {
+      setCanInstall(pwaService.isInstallable)
+    })
+  }, [])
 
   // Form Fields
   const [email, setEmail] = useState('')
@@ -300,18 +309,43 @@ export default function LoginView({
         </div>
 
         {/* PWA Manual Install Instructions */}
-        <div style={{ marginTop: 24, padding: '16px', background: '#F7F6F3', borderRadius: 12, border: '1px dashed #C9C5BC' }}>
-          <h3 style={{ margin: '0 0 10px', fontSize: 13, fontWeight: 700, color: '#14432C', display: 'flex', alignItems: 'center', gap: 6 }}>
-            📱 Usa NuVida como una App
-          </h3>
-          <ul style={{ margin: 0, paddingLeft: 18, fontSize: 12, color: '#625F58', display: 'flex', flexDirection: 'column', gap: 8, lineHeight: 1.4 }}>
-            <li>
-              <strong>En iPhone / iPad:</strong> Toca el botón de <em>Compartir</em> en Safari y luego selecciona <strong>"Agregar a Inicio"</strong>.
-            </li>
-            <li>
-              <strong>En Android / PC:</strong> Usa el botón de instalar en la parte superior, o busca <strong>"Instalar aplicación"</strong> en el menú de Chrome/Edge.
-            </li>
-          </ul>
+        <div style={{ marginTop: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {!pwaService.isInstalled && (
+            <button
+              onClick={() => {
+                if (canInstall) {
+                  pwaService.installApp()
+                } else {
+                  setShowInstallInfo(!showInstallInfo)
+                }
+              }}
+              style={{
+                width: '100%',
+                padding: '12px',
+                background: '#F7F6F3',
+                color: '#14432C',
+                border: '1px dashed #C9C5BC',
+                borderRadius: 8,
+                fontSize: 13,
+                fontWeight: 700,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+                transition: 'all 0.2s ease'
+              }}
+            >
+              📱 {showInstallInfo ? 'Ocultar instrucciones' : 'Instalar NuVida como App'}
+            </button>
+          )}
+
+          {showInstallInfo && !pwaService.isInstalled && (
+            <div style={{ padding: '14px', background: '#F7F6F3', borderRadius: 8, fontSize: 12, color: '#625F58', lineHeight: 1.5, textAlign: 'left', animation: 'fadeIn 0.2s ease' }}>
+              <strong>En iPhone / iPad:</strong> Safari no permite instalaciones automáticas. Toca el botón de <em>Compartir</em> <svg style={{display:'inline', verticalAlign:'middle'}} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg> y luego selecciona <strong>"Agregar a Inicio"</strong> <svg style={{display:'inline', verticalAlign:'middle'}} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>.<br/><br/>
+              <strong>En Android / PC:</strong> Asegúrate de abrir este enlace directamente en Google Chrome o Microsoft Edge.
+            </div>
+          )}
         </div>
 
         {/* Footer Support Links */}
