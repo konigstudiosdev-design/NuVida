@@ -117,11 +117,7 @@ function MainApp() {
 
   // 2. Patient Role Restriction (Redirects straight to Patient Portal)
   if (currentUser?.role === 'paciente') {
-    return (
-      <div style={{ background: '#F7F6F3', minHeight: '100vh', padding: '20px 10px' }}>
-        <PortalPaciente />
-      </div>
-    )
+    return <PortalPaciente />
   }
 
   // 3. Route Guard for Recepcionista (Restricted from Clinical / Plan Editor)
