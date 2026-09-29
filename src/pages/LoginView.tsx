@@ -35,7 +35,11 @@ export default function LoginView({
   const handleGoogleLogin = async () => {
     setLoading(true)
     setErrorMessage(null)
+
+    // Simplification: In a real app we'd verify their email in Firestore to determine role.
+    // For now we'll pass 'nutriologo' to get them into the system since we removed the role selector.
     const res = await loginWithGoogle('nutriologo')
+
     setLoading(false)
     if (res.success) {
       onSuccess()

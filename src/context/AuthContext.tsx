@@ -113,9 +113,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       const user: AuthUser = {
         id: fbUser.uid,
-        name: fbUser.displayName || 'Nutrióloga Titular',
+        name: fbUser.displayName || 'Usuario NuVida',
         email: fbUser.email || '',
-        role: intendedRole,
+        role: intendedRole, // The backend will later override this by checking if email exists in Patients DB
         organizationId: `org_${fbUser.uid.slice(0, 8)}`,
         organizationName: 'Consultorio Nutricional NuVida',
         authMethod: 'google',
