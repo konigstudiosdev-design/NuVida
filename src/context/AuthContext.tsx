@@ -89,20 +89,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        // Map Real Firebase User to NuVida AuthUser
-        setCurrentUser(prev => ({
-          id: user.uid,
-          name: prev?.name || user.displayName || user.email?.split('@')[0] || 'Nutrióloga Titular',
-          email: user.email || prev?.email || '',
-          phone: prev?.phone,
-          role: 'nutriologo',
-          organizationId: prev?.organizationId || `org_${user.uid.slice(0, 8)}`,
-          organizationName: prev?.organizationName || 'Consultorio Nutricional NuVida',
-          authMethod: user.providerData[0]?.providerId.includes('google') ? 'google' : 'email',
-          avatarUrl: user.photoURL || undefined,
-          cedula: prev?.cedula,
-          especialidad: prev?.especialidad,
-        }))
+        // Only override state if there's no current user or we are explicitly logging in
+        setCurrentUser(prev => {
+          if (prev && prev.id === user.uid) return prev; // Keep existing session data from localstorage
+          return {
+            id: user.uid,
+            name: prev?.name || user.displayName || user.email?.split('@')[0] || 'Nutrióloga Titular',
+            email: user.email || prev?.email || '',
+            phone: prev?.phone,
+            role: prev?.role || 'nutriologo',
+            organizationId: prev?.organizationId || `org_${user.uid.slice(0, 8)}`,
+            organizationName: prev?.organizationName || 'Consultorio Nutricional NuVida',
+            authMethod: user.providerData[0]?.providerId.includes('google') ? 'google' : 'email',
+            avatarUrl: user.photoURL || undefined,
+            cedula: prev?.cedula,
+            especialidad: prev?.especialidad,
+          }
+        })
       } else {
         // Keep current user if offline credentials mode
         if (currentUser?.authMethod === 'credentials' || currentUser?.authMethod === 'phone') {
