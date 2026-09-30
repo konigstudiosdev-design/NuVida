@@ -65,9 +65,25 @@ const DEFAULT_SESSIONS: ActiveSession[] = [
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState<AuthUser | null>(null)
+  const [currentUser, setCurrentUser] = useState<AuthUser | null>(() => {
+    try {
+      const stored = localStorage.getItem('nuvida_auth_user')
+      return stored ? JSON.parse(stored) : null
+    } catch (e) {
+      return null
+    }
+  })
   const [activeSessions, setActiveSessions] = useState<ActiveSession[]>(DEFAULT_SESSIONS)
   const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null)
+
+  // Persist user in local storage
+  useEffect(() => {
+    if (currentUser) {
+      localStorage.setItem('nuvida_auth_user', JSON.stringify(currentUser))
+    } else {
+      localStorage.removeItem('nuvida_auth_user')
+    }
+  }, [currentUser])
 
   // Listen to Real Firebase Auth State Changes
   useEffect(() => {
