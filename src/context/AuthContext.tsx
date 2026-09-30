@@ -89,30 +89,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        // Only override state if there's no current user or we are explicitly logging in
+        // Read directly from local storage inside this closure to ensure we have the absolute latest state
+        const storedJson = localStorage.getItem('nuvida_auth_user')
+        const storedUser = storedJson ? JSON.parse(storedJson) : null
+
         setCurrentUser(prev => {
-          if (prev && prev.id === user.uid) return prev; // Keep existing session data from localstorage
+          // If we already have a full session in memory or local storage for this user, keep its precise role
+          const existingData = prev || storedUser
+          if (existingData && existingData.id === user.uid) return existingData;
+
           return {
             id: user.uid,
-            name: prev?.name || user.displayName || user.email?.split('@')[0] || 'Nutrióloga Titular',
-            email: user.email || prev?.email || '',
-            phone: prev?.phone,
-            role: prev?.role || 'nutriologo',
-            organizationId: prev?.organizationId || `org_${user.uid.slice(0, 8)}`,
-            organizationName: prev?.organizationName || 'Consultorio Nutricional NuVida',
+            name: user.displayName || user.email?.split('@')[0] || 'Nutrióloga Titular',
+            email: user.email || '',
+            role: 'nutriologo', // Fallback, but Google login now sets it immediately before this hook fires
+            organizationId: `org_${user.uid.slice(0, 8)}`,
+            organizationName: 'Consultorio Nutricional NuVida',
             authMethod: user.providerData[0]?.providerId.includes('google') ? 'google' : 'email',
             avatarUrl: user.photoURL || undefined,
-            cedula: prev?.cedula,
-            especialidad: prev?.especialidad,
           }
         })
       } else {
         // Keep current user if offline credentials mode
-        if (currentUser?.authMethod === 'credentials' || currentUser?.authMethod === 'phone') {
-          // preserve custom session
-        } else {
-          setCurrentUser(null)
-        }
+        setCurrentUser(prev => {
+          if (prev?.authMethod === 'credentials' || prev?.authMethod === 'phone') {
+            return prev
+          }
+          return null
+        })
       }
     })
     return () => unsubscribe()
