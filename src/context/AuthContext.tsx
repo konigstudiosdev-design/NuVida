@@ -20,6 +20,7 @@ export interface AuthUser {
   username?: string
   phone?: string
   role: UserRole
+  roleSelectionPending?: boolean
   organizationId: string
   organizationName: string
   patientId?: number
@@ -46,7 +47,7 @@ interface AuthContextType {
   activeSessions: ActiveSession[]
 
   // Real Auth Flows
-  loginWithGoogle: (role: 'nutriologo' | 'paciente') => Promise<{ success: boolean; message?: string }>
+  loginWithGoogle: () => Promise<{ success: boolean; message?: string }>
   loginWithCredentials: (usernameOrEmail: string, pass: string) => Promise<{ success: boolean; isFirstLogin?: boolean; message?: string }>
   sendPhoneOtp: (phone: string, recaptchaContainerId: string) => Promise<{ success: boolean; message?: string }>
   verifyPhoneOtp: (otpCode: string) => Promise<{ success: boolean; message?: string }>
@@ -100,9 +101,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
           return {
             id: user.uid,
-            name: user.displayName || user.email?.split('@')[0] || 'Nutrióloga Titular',
+            name: user.displayName || user.email?.split('@')[0] || 'Usuario NuVida',
             email: user.email || '',
-            role: 'nutriologo', // Fallback, but Google login now sets it immediately before this hook fires
+            role: 'nutriologo', // temporary placeholder
+            roleSelectionPending: true, // FLAG: Show role selector immediately
             organizationId: `org_${user.uid.slice(0, 8)}`,
             organizationName: 'Consultorio Nutricional NuVida',
             authMethod: user.providerData[0]?.providerId.includes('google') ? 'google' : 'email',
